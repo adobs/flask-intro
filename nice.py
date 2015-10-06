@@ -10,7 +10,10 @@ app = Flask(__name__)
 # route to handle the landing page of a website.
 @app.route('/')
 def start_here():
-    return "Hi! This is the home page."
+    return """
+    <html><head><title>Home</title></head><body>Hi! This is the home page.<br>
+    <a href = "/hello">Hello Page</a></body></html>
+    """
 
 # route to display a simple web page
 @app.route('/hello')
@@ -23,24 +26,33 @@ def say_hello():
         </head>
         <body>
             <h1>Hi There!</h1>
-            <form action="/greet">
-                <label>What's your name? <input type="text" name="person"></label>
+            <form action="/greet" method="POST">
+                <label>What's your name? <input type="text" name="person"></label><br>
+                <label for "compliment">Choose your compliment:</label> 
+                <select name="compliment" id="compliment">
+                    <option value="awesome">awesome</option>
+                    <option value="brilliant">brilliant</option>
+                    <option value="lovely">lovely</option>
+                    <option value="neato">neato</option>
+                    <option value="fantabulous">fantabulous</option>
+                </select><br>
                 <input type="submit">
+
             </form>
         </body>
     </html>
 
     """
 
-@app.route('/greet')
+@app.route('/greet', methods=["POST"])
 def greet_person():
-    player = request.args.get("person")
+    player = request.form.get("person")
 
     AWESOMENESS = [
         'awesome', 'terrific', 'fantastic', 'neato', 'fantabulous', 'wowza', 'oh-so-not-meh',
         'brilliant', 'ducky', 'coolio', 'incredible', 'wonderful', 'smashing', 'lovely']
 
-    compliment = choice(AWESOMENESS)
+    compliment = request.form.get("compliment")
 
     return """
     <!DOCTYPE html>
@@ -49,7 +61,7 @@ def greet_person():
             <title>A Compliment</title>
         </head>
         <body>
-            Hi %s I think you're %s!
+            Hi %s! I think you're %s!
         </body>
     </html>""" % (player, compliment)
 
